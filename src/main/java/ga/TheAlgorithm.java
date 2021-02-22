@@ -13,6 +13,7 @@ import java.util.Random;
 import org.uncommons.maths.number.AdjustableNumberGenerator;
 import org.uncommons.maths.number.NumberGenerator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
+import org.uncommons.maths.random.PoissonGenerator;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.maths.random.XORShiftRNG;
 import org.uncommons.watchmaker.framework.CachingFitnessEvaluator;
@@ -25,6 +26,7 @@ import org.uncommons.watchmaker.framework.PopulationData;
 import org.uncommons.watchmaker.framework.SelectionStrategy;
 import org.uncommons.watchmaker.framework.TerminationCondition;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
+import org.uncommons.watchmaker.framework.operators.ListInversion;
 import org.uncommons.watchmaker.framework.operators.ListOperator;
 import org.uncommons.watchmaker.framework.operators.ListOrderCrossover;
 import org.uncommons.watchmaker.framework.operators.ListOrderMutation;
@@ -81,8 +83,9 @@ public class TheAlgorithm {
 
 	private EvolutionaryOperator<List<ParamModel>> createEvolutionPipeline(ParamFactory factory, Random rng) {
 		List<EvolutionaryOperator<List<ParamModel>>> operators = new ArrayList<EvolutionaryOperator<List<ParamModel>>>(2);
-		operators.add(new ListOrderCrossover<ParamModel>());
-		operators.add(new ListOrderMutation<ParamModel>());
+		operators.add(new CustomListOrderCrossover<ParamModel>());
+		operators.add(new CustomListOrderMutation<ParamModel>());
+//		operators.add(new ListInversion<ParamModel>(getNumberGenerator()));
 		return new EvolutionPipeline<List<ParamModel>>(operators);
 	}
 	
@@ -108,13 +111,15 @@ public class TheAlgorithm {
     {
         public void populationUpdate(PopulationData<? extends List<ParamModel>> data)
         {
-        	
-            System.out.printf("Generation %d:\t Best Candidate Fitness:%s\t  Best Fitness Standard Deviation: %s\t Mean Fitness: %s\t Best Candidate:%s\n",
-                              data.getGenerationNumber(),
-                              data.getBestCandidateFitness(),
-                              data.getFitnessStandardDeviation(),
-                              data.getMeanFitness(),
-                              data.getBestCandidate());
+        	if(Config.SHOW_LOG) {
+        		System.out.printf("Generation %d:\t Best Candidate Fitness:%s\t  Best Fitness Standard Deviation: %s\t Mean Fitness: %s\t Best Candidate:%s\n",
+                        data.getGenerationNumber(),
+                        data.getBestCandidateFitness(),
+                        data.getFitnessStandardDeviation(),
+                        data.getMeanFitness(),
+                        data.getBestCandidate());
+        	}
+            
         }
     }
 }

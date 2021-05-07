@@ -1,10 +1,12 @@
 package ga;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.lang3.RandomUtils;
 
 import com.github.javafaker.Faker;
+
 
 public class GenerateData {
 	
@@ -28,7 +30,8 @@ public class GenerateData {
 		}
 		
 		if(dataType.equals("char")) {
-			return this.getRandomChar();
+			char ch = this.getRandomChar();
+			return this.getRandomBoolean() ? Character.toUpperCase(ch) : Character.toLowerCase(ch);
 		}
 		
 		if(dataType.equals("short")) {
@@ -72,7 +75,7 @@ public class GenerateData {
 	
 	public int getRandomInt() {
 //		return this.faker.number().randomDigit();
-		return this.r.nextInt();
+		return this.faker.number().randomDigit();
 	}
 	
 	public long getRandomLong() {
@@ -84,6 +87,6 @@ public class GenerateData {
 	}
 	
 	public double getRandomDouble() {
-		return this.r.nextDouble();
+		return this.faker.number().randomDouble(2, -1000000, 1000000);
 	}
 }

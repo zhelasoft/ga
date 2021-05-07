@@ -1,19 +1,14 @@
 package ga;
 
-import static io.jenetics.engine.EvolutionResult.toBestPhenotype;
-import static io.jenetics.engine.Limits.bySteadyFitness;
 
-import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 import org.uncommons.maths.number.AdjustableNumberGenerator;
 import org.uncommons.maths.number.NumberGenerator;
-import org.uncommons.maths.random.MersenneTwisterRNG;
-import org.uncommons.maths.random.PoissonGenerator;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.maths.random.XORShiftRNG;
 import org.uncommons.watchmaker.framework.CachingFitnessEvaluator;
@@ -26,43 +21,23 @@ import org.uncommons.watchmaker.framework.PopulationData;
 import org.uncommons.watchmaker.framework.SelectionStrategy;
 import org.uncommons.watchmaker.framework.TerminationCondition;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
-import org.uncommons.watchmaker.framework.operators.ListInversion;
-import org.uncommons.watchmaker.framework.operators.ListOperator;
-import org.uncommons.watchmaker.framework.operators.ListOrderCrossover;
-import org.uncommons.watchmaker.framework.operators.ListOrderMutation;
-import org.uncommons.watchmaker.framework.selection.RouletteWheelSelection;
 import org.uncommons.watchmaker.framework.selection.TournamentSelection;
 import org.uncommons.watchmaker.framework.termination.GenerationCount;
 import org.uncommons.watchmaker.framework.termination.TargetFitness;
 
-import io.jenetics.BitChromosome;
-import io.jenetics.BitGene;
-import io.jenetics.EliteSelector;
-import io.jenetics.Genotype;
-import io.jenetics.Mutator;
-import io.jenetics.Phenotype;
-import io.jenetics.SinglePointCrossover;
-import io.jenetics.engine.Engine;
-import io.jenetics.engine.EvolutionStatistics;
-import io.jenetics.util.Factory;
 
 public class TheAlgorithm {
 
 	private Method m;
 	private Object obj;
-	private GenerateData gd;
-	private double prob;
-	private ParamFactory pf;
 
+	
 	TheAlgorithm(Method m, Object obj) {
 		this.m = m;
 		this.obj = obj;
-		this.gd = new GenerateData();
-		this.prob = 0;
-		this.pf = new ParamFactory(m);
 	}
 
-	public List<ParamModel> run() {
+	public void run(int round) throws IOException {
 
 		Random rng = new XORShiftRNG();
 		FitnessEvaluator<List<ParamModel>> evaluator = new CachingFitnessEvaluator<List<ParamModel>>(
@@ -75,9 +50,15 @@ public class TheAlgorithm {
 		EvolutionEngine<List<ParamModel>> engine = new GenerationalEvolutionEngine<List<ParamModel>>(factory, pipeline,
 				evaluator, selection, rng);
 		
-		engine.addEvolutionObserver(new EvolutionLogger());
+		EvolutionLogger el = new EvolutionLogger();
 		
-		return engine.evolve(Config.POPULATION_SIZE, Config.ELITISIM_COUNT, this.terminationConditions());
+		engine.addEvolutionObserver(el);
+		
+		engine.evolve(Config.POPULATION_SIZE, Config.ELITISIM_COUNT, this.terminationConditions());
+		
+		if(Config.EXPORT) {
+			Export.toCsv(round, this.methodInfo(), EvolutionLogger.listOfLog);
+		}
 
 	}
 
@@ -89,7 +70,7 @@ public class TheAlgorithm {
 		return new EvolutionPipeline<List<ParamModel>>(operators);
 	}
 	
-	private NumberGenerator getNumberGenerator() {
+	private NumberGenerator<Probability> getNumberGenerator() {
 		return new AdjustableNumberGenerator<Probability>(new Probability(0.05));
 	}
 	
@@ -109,17 +90,59 @@ public class TheAlgorithm {
      */
     private static class EvolutionLogger implements EvolutionObserver<List<ParamModel>>
     {
-        public void populationUpdate(PopulationData<? extends List<ParamModel>> data)
+    	public static ArrayList<String[]> listOfLog;
+    	
+    	EvolutionLogger() {
+    		listOfLog = new ArrayList<String[]>();
+    	}
+    	
+		public void populationUpdate(PopulationData<? extends List<ParamModel>> data)
         {
+			int generationNumber = data.getGenerationNumber();
+			double bestCandidateFitness = data.getBestCandidateFitness();
+			double fitnessStandardDeviation = data.getFitnessStandardDeviation();
+			double meanFitness = data.getMeanFitness();
+			double elapsedTime = data.getElapsedTime();
+			List<ParamModel> bestCandidate = data.getBestCandidate();
+			
+			String[] log = new String[6];
+			log[0] = generationNumber + "";
+			log[1] = bestCandidateFitness + "";
+			log[2] = fitnessStandardDeviation + "";
+			log[3] = meanFitness + "";
+			log[4] = elapsedTime + "";
+			log[5] = bestCandidate.toString();
+			
+			EvolutionLogger.listOfLog.add(log);
+			
         	if(Config.SHOW_LOG) {
-        		System.out.printf("Generation %d:\t Best Candidate Fitness:%s\t  Best Fitness Standard Deviation: %s\t Mean Fitness: %s\t Best Candidate:%s\n",
-                        data.getGenerationNumber(),
-                        data.getBestCandidateFitness(),
-                        data.getFitnessStandardDeviation(),
-                        data.getMeanFitness(),
-                        data.getBestCandidate());
+        		System.out.printf("Generation %d:\t Best Candidate Fitness:%s\t  Best Fitness Standard Deviation: %s\t Mean Fitness: %s\t Elapsed time(Milli Second): %s\t Best Candidate:%s\n",
+                        generationNumber,
+                        bestCandidateFitness,
+                        fitnessStandardDeviation,
+                        meanFitness,
+                        elapsedTime,
+                        bestCandidate.toString());
         	}
             
         }
+    }
+    
+    public String[] methodInfo() {
+    	String[] methodInfo = new String[4];
+		methodInfo[0] = this.obj.getClass().toString();
+		methodInfo[1] = this.m.getName();
+		methodInfo[2] = this.m.getReturnType() + "";
+		methodInfo[3] = "";
+		
+		Class<?>[] params = this.m.getParameterTypes();
+		for(int i = 0; i < params.length; i++) {
+			methodInfo[3] += params[i];
+			if(i + 1 != params.length) {
+				methodInfo[3] += ", ";
+			}
+		}
+		
+		return methodInfo;
     }
 }

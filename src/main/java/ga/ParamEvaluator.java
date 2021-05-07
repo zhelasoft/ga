@@ -27,7 +27,7 @@ public class ParamEvaluator implements FitnessEvaluator<List<ParamModel>> {
 	public double getFitness(List<ParamModel> candidate, List<? extends List<ParamModel>> population) {
 		int errors = 0;
 
-		for (int i = 0; i < Config.LENGTH_OF_CHROMOSOME; i++) {
+		for (int i = 0; i < Config.NUMBER_OF_CHROMOSOMES; i++) {
 
 			ParamModel model = candidate.get(i);
 

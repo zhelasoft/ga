@@ -19,7 +19,10 @@ public class Main {
 				mp = new MethodProcesser(m);
 				if(mp.isQualified()) {
 					ta = new TheAlgorithm(m, sc);
-					ta.run();
+					for(int j = 0; j < Config.ROUND; j++) {
+						ta.run(j);
+					}
+					
 					// You may want to go from here
 				}
 			}

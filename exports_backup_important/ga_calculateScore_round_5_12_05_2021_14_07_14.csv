@@ -1,0 +1,9 @@
+Class name,Method name,Return type,Parameters,,
+class ga.SampleClass,calculateScore,int,"char, char"
+""
+Generation,Best Candidate Fitness,Best Candidate Standard Deviation,Mean Fitness,Elapsed Time(Milli Second),Best Candidate
+
+0,8.0,0.5635601121442141,9.68,4.0,"[[l, h], [K, B], [L, L], [S, p], [J, J], [S, D], [a, B], [A, a], [r, G], [j, d]]"
+1,9.0,0.271293199325011,9.92,5.0,"[[C, K], [L, R], [k, A], [E, C], [R, H], [H, b], [c, l], [L, t], [t, d], [l, l]]"
+2,9.0,0.09949874371066196,9.99,6.0,"[[l, m], [C, r], [J, k], [b, a], [g, s], [N, k], [G, G], [l, A], [C, c], [J, k]]"
+3,10.0,0.0,10.0,7.0,"[[M, d], [F, b], [f, H], [r, M], [J, V], [a, i], [T, l], [S, l], [A, E], [D, M]]"

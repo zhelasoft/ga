@@ -1,0 +1,6 @@
+"","Class","Method Name","Return Type","Parameter Types"
+"1","class ga.SampleClass","calculateScore","int","char, char"
+"11","class ga.SampleClass","determineGuess","boolean","int, int"
+"21","class ga.SampleClass","isQualifiedForRetirement","boolean","long, long"
+"31","class ga.SampleClass","setMemberAge","void","long"
+"41","class ga.SampleClass","withdraw","double","boolean, double"

@@ -1,0 +1,6 @@
+"","Method Name","Best candidate fitness average","Best candidate standard deviation","Mean fitness","Terminated by generation count","Elapsed time(Seconds)","Total Generations","Min Generation","Max Generation"
+"1","calculateScore",8.88095238095238,0.228816909379056,9.90738095238095,0,0.08,42,3,8
+"2","determineGuess",7.36842105263158,0.599116308581892,9.32618421052632,0,0.112,76,9,11
+"3","isQualifiedForRetirement",6.78834355828221,0.235154010872165,7.36586656441718,1,1.128,1304,29,42
+"4","setMemberAge",4.59574468085106,0.896396534058755,6.8963829787234,0,0.116,188,19,21
+"5","withdraw",5.90769230769231,0.843817846772203,8.20184615384615,0,0.242,130,12,16

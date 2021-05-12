@@ -2,5 +2,6 @@
 "1","Best candidate fitness average",6.56149425287356
 "2","Best candidate standard deviation",0.367817728911999
 "3","Mean fitness",7.52456896551724
-"4","Terminated by generation count",1
-"5","Elapsed time(Seconds)",1.678
+"4","Total Number Of Generations",1740
+"5","Terminated by generation count",1
+"6","Elapsed time(Seconds)",1.678

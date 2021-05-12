@@ -32,7 +32,9 @@ public class Export {
 				"Class name", 
 				"Method name", 
 				"Return type",
-				"Parameters"
+				"Parameters",
+				"",
+				""
 		);	
 	}
 	public static void toCsv(int round, String[] methodInfo, ArrayList<String[]> data) throws IOException {
@@ -47,6 +49,7 @@ public class Export {
 	    	printer.printRecord(methodInfo);
 	    	printer.printRecord(Arrays.asList(""));
 	    	printer.printRecord(Export.header());
+	    	printer.println();
 	    	for(String[] record: data) {
 	    		printer.printRecord(record);
 	    	}

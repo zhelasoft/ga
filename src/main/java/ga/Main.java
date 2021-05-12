@@ -1,6 +1,8 @@
 package ga;
 
 import java.lang.reflect.*;
+import java.time.Duration;
+import java.time.Instant;
 
 public class Main {
 
@@ -10,6 +12,8 @@ public class Main {
 		SampleClass sc = new SampleClass();
 		MethodProcesser mp;
 		TheAlgorithm ta;
+		
+		Instant start = Instant.now();
 		
 		try {
 			Class cls = sc.getClass();
@@ -29,6 +33,12 @@ public class Main {
 		} catch (Throwable e) {
 			System.err.println(e);
 		}
+		
+		Instant end = Instant.now();
+		 Duration timeElapsed = Duration.between(start, end);
+		 
+		 System.out.println("The total elapsed time is = " + timeElapsed.getSeconds() + " seconds");
+		
 		
 	}
 }
